@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>ECOGUARD AI – Illegal Waste Dumping Detection, Monitoring & Escalation System</title>
+    
+    <!-- PWA & Mobile Web Capabilities -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#065f46">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="EcoGuard AI">
+    <meta name="application-name" content="EcoGuard AI">
+    <meta name="description" content="AI-Powered Illegal Waste Dumping Detection, Monitoring and Complaint Escalation System">
+    
+    <!-- App Icons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/static/icons/icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/icons/favicon.png">
+    
+    <!-- Leaflet CSS for Interactive GIS Mapping -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    
+    <!-- Application Stylesheet -->
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+    <!-- Offline Status Warning Banner -->
+    <div id="offline-indicator-banner" class="offline-banner" style="display: none;">
+        <span>📡 <strong>Offline Mode:</strong> No internet connection. Operating with cached data.</span>
+    </div>
+
+    <!-- PWA Install Banner for Mobile Chrome -->
+    <div id="pwa-install-banner" class="pwa-install-banner" style="display: none;">
+        <div class="pwa-banner-content">
+            <div class="pwa-banner-icon">
+                <img src="/static/icons/icon-192x192.png" alt="EcoGuard AI Logo" style="width: 38px; height: 38px; border-radius: 8px;">
+            </div>
+            <div class="pwa-banner-text">
+                <strong>Install ECOGUARD AI</strong>
+                <span>Add to Home Screen for fast mobile camera reporting & offline tracking</span>
+            </div>
+        </div>
+        <div class="pwa-banner-actions">
+            <button class="btn btn-primary btn-sm" id="btn-banner-install">📲 Install App</button>
+            <button class="pwa-banner-dismiss" id="btn-banner-dismiss" title="Dismiss">✕</button>
+        </div>
+    </div>
+
+    <!-- ==========================================================================
+         TOP NAVIGATION BAR
+         ========================================================================== -->
+    <nav class="navbar">
+        <div class="brand-container">
+            <div class="brand-logo">
+                <img src="/static/icons/icon-192x192.png" alt="EcoGuard" style="width: 100%; height: 100%; border-radius: 8px; object-fit: cover;">
+            </div>
+            <div class="brand-text">
+                <h1>ECOGUARD <span>AI</span></h1>
+                <div class="tagline">Detect. Analyse. Report. Assign. Escalate. Protect.</div>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs (Desktop & Tablet) -->
+        <div class="nav-tabs">
+            <button class="nav-tab-btn active" data-tab="tab-home">
+                🏠 Home
+            </button>
+            <button class="nav-tab-btn" data-tab="tab-report">
+                📢 Report Waste
+            </button>
+            <button class="nav-tab-btn" data-tab="tab-citizen">
+                📊 Citizen Portal
+            </button>
+            <button class="nav-tab-btn" data-tab="tab-hotspots">
+                🗺️ Live Map & Hotspots
+            </button>
+            <button class="nav-tab-btn" data-tab="tab-officer">
+                🛡️ Officer Dashboard
+            </button>
+            <button class="nav-tab-btn" data-tab="tab-knowledge">
+                📚 Guidelines & RAG
+            </button>
+        </div>
+
+        <!-- Right Side: Install Button, AI Status & Auth Badge -->
+        <div class="nav-actions">
+            <!-- PWA Install Button (Android Chrome / Desktop) -->
+            <button class="btn btn-primary btn-sm btn-install-app" id="btn-install-app" style="display: none;" title="Install EcoGuard AI as a Mobile / Desktop App">
+                📲 Install App
+            </button>
+
+            <span id="ai-engine-status-badge" class="badge badge-action" title="AI Computer Vision Engine">
+                ⚡ Gemini AI
+            </span>
+            <div id="nav-user-badge-container">
+                <button class="btn btn-secondary btn-sm" onclick="showTab('tab-officer')">
+                    🛡️ Officer Login
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ==========================================================================
+         MAIN APPLICATION CONTENT CONTAINER
+         ========================================================================== -->
+    <main class="main-content">
+
+        <!-- ======================================================================
+             TAB 1: HOME PAGE
+             ====================================================================== -->
+        <section id="tab-home" class="tab-pane active">
+            <!-- Hero Banner -->
+            <div class="hero-section">
+                <div class="hero-badge">
+                    🌍 Hackathon Prototype • AI-Powered Environmental Governance
+                </div>
+                <h1 class="hero-title">
+                    Real-Time Detection, Monitoring & <span>Automatic Escalation</span> of Illegal Waste Dumping
+                </h1>
+                <p class="hero-subtitle">
+                    ECOGUARD AI transforms waste reporting from passive complaints into an accountable, verifiable enforcement workflow. Combining Google Gemini multimodal computer vision, GPS pinpointing, SLA deadline tracking, and automatic officer escalation.
+                </p>
+                <div class="hero-cta-group">
+                    <button class="btn btn-hero-primary" onclick="showTab('tab-report')">
+                        📢 Report Illegal Dumping Now
+                    </button>
+                    <button class="btn btn-hero-secondary" onclick="showTab('tab-citizen')">
+                        🔍 Track a Complaint (By ID)
+                    </button>
+                    <button class="btn btn-hero-secondary" onclick="showTab('tab-hotspots')">
+                        🗺️ View GIS Hotspot Map
+                    </button>
+                </div>
+                <div class="hero-stats-row">
+                    <div class="hero-stat-item">
+                        <div class="hero-stat-number">100%</div>
+                        <div class="hero-stat-label">Location-Verified via GPS</div>
+                    </div>
+                    <div class="hero-stat-item">
+                        <div class="hero-stat-number">&lt; 2.5s</div>
+                        <div class="hero-stat-label">Gemini AI Vision Analysis</div>
+                    </div>
+                    <div class="hero-stat-item">
+                        <div class="hero-stat-number">24h / 48h</div>
+                        <div class="hero-stat-label">Automated SLA Escalation Matrix</div>
+                    </div>
+                    <div class="hero-stat-item">
+                        <div class="hero-stat-number">Formal PDF</div>
+                        <div class="hero-stat-label">Statutory Inspection Dossier</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- How It Works Section -->
+            <div class="section-header">
+                <h2>How ECOGUARD AI Works</h2>
+                <p>An end-to-end traceable lifecycle connecting citizens, AI vision agents, and municipal field teams.</p>
+            </div>
+            <div class="workflow-grid">
+                <div class="workflow-card">
+                    <div class="workflow-step-num">01</div>
+                    <div class="workflow-icon">📸</div>
+                    <h3 class="workflow-title">Snap & Geotag</h3>
+                    <p class="workflow-desc">
+                        Citizen or field officer captures a waste photograph and locks precise GPS coordinates with user permission or manual map drag.
+                    </p>
+                </div>
+                <div class="workflow-card">
+                    <div class="workflow-step-num">02</div>
+                    <div class="workflow-icon">🤖</div>
+                    <h3 class="workflow-title">Gemini AI Profiler</h3>
+                    <p class="workflow-desc">
+                        Multimodal Gemini API classifies visible waste categories (plastic, C&D, hazardous, e-waste), assigns ecological severity, and suggests handling protocols.
+                    </p>
+                </div>
+                <div class="workflow-card">
+                    <div class="workflow-step-num">03</div>
+                    <div class="workflow-icon">⚡</div>
+                    <h3 class="workflow-title">Automated Dispatch</h3>
+                    <p class="workflow-desc">
+                        System issues a unique Complaint ID (e.g. EG-2026-XXXX) and routes the dossier immediately to the responsible zonal sanitation squad.
+                    </p>
+                </div>
+                <div class="workflow-card">
+                    <div class="workflow-step-num">04</div>
+                    <div class="workflow-icon">🛡️</div>
+                    <h3 class="workflow-title">Verification & Escalation</h3>
+                    <p class="workflow-desc">
+                        Authorized officers inspect the site and log remarks. If unaddressed within SLA limits, the system automatically triggers Level 1 reminders and Level 2 commissioner escalations.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Key Features & Innovations Grid -->
+            <div class="section-header">
+                <h2>Core Architectural Innovations</h2>
+                <p>Engineered for government-grade accountability and transparent environmental compliance.</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon-box">🧠</div>
+                    <div class="feature-info">
+                        <h4>Preliminary AI Vision with Guardrails</h4>
+                        <p>Structured JSON output identifies visible discards while strictly labeling observations as preliminary to mandate human officer verification.</p>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon-box">📍</div>
+                    <div class="feature-info">
+                        <h4>Interactive GIS & Geolocation</h4>
+                        <p>Browser Geolocation API locks device coordinates with OpenStreetMap reverse-geocoding and drag-and-drop marker refinement.</p>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon-box">⏱️</div>
+                    <div class="feature-info">
+                        <h4>Configurable SLA Escalation Pipeline</h4>
+                        <p>Time-based background engine checks pending complaints. Overdue cases escalate automatically up the municipal command chain.</p>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon-box">📜</div>
+                    <div class="feature-info">
+                        <h4>Tamper-Evident Audit History</h4>
+                        <p>Every submission, AI classification, officer status change, inspection remark, and escalation event is immutably timestamped.</p>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon-box">🔥</div>
+                    <div class="feature-info">
+                        <h4>Dumping Hotspot Radar</h4>
+                        <p>Spatial proximity clustering aggregates repeat offenses within 1km to pinpoint high-risk illegal dumping zones for targeted patrols.</p>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon-box">📄</div>
+                    <div class="feature-info">
+                        <h4>Statutory PDF Dossier Export</h4>
+                        <p>Instant ReportLab generation of official Government-format environmental incident summaries for court enforcement.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Environmental Hotline Banner -->
+            <div class="card" style="background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%); border-color: #a7f3d0;">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
+                    <div>
+                        <h3 style="color: #065f46; margin-bottom: 6px;">🌱 24/7 Citizen Environmental Vigilance</h3>
+                        <p style="color: #047857; font-size: 14px; max-width: 680px;">
+                            Report clandestine night dumping, hazardous chemical spills, or construction debris obstructing drainage. Together we protect our water bodies, soil health, and public air quality.
+                        </p>
+                    </div>
+                    <button class="btn btn-primary" onclick="showTab('tab-report')">
+                        🚀 File a Geotagged Report
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ======================================================================
+             TAB 2: CITIZEN REPORTING & AI VISION
+             ====================================================================== -->
+        <section id="tab-report" class="tab-pane">
+            <div class="section-header">
+                <h2>Citizen & Field Officer Waste Reporting</h2>
+                <p>Upload a photograph of suspected waste dumping, verify GPS coordinates, and view instant AI classification.</p>
+            </div>
+
+            <form id="report-complaint-form">
+                <div class="grid-2">
+                    
+                    <!-- Left Column: Photo Upload & AI Vision Preview -->
+                    <div>
+                        <div class="card">
+                            <div class="card-title">
+                                <span>1. Waste Photograph Evidence</span>
+                                <span style="font-size: 11px; font-weight: normal; color: #64748b;">Supported: JPG, PNG, WEBP</span>
+                            </div>
+
+                            <!-- Image Upload Dropzone -->
+                            <div class="dropzone" id="image-dropzone">
+                                <div class="dropzone-icon">📷</div>
+                                <p><strong>Drag & Drop</strong> waste photo here or <span>browse local file</span></p>
+                                <p style="font-size: 12px; margin-top: 4px;">Clear photographs with visible waste types ensure highest AI accuracy</p>
+                            </div>
+                            <input type="file" id="waste-file-input" accept="image/jpeg,image/png,image/webp" style="display: none;">
+                            <!-- Native Camera Capture for Android Chrome & Mobile Browsers -->
+                            <input type="file" id="camera-file-input" accept="image/*" capture="environment" style="display: none;">
+
+                            <!-- Dual Mobile & Desktop Photo Capture Buttons -->
+                            <div style="margin-top: 12px; display: flex; gap: 8px;">
+                                <button type="button" class="btn btn-secondary btn-sm" id="btn-browse-file" style="flex: 1;">
+                                    📁 Browse File
+                                </button>
+                                <button type="button" class="btn btn-primary btn-sm" id="btn-open-camera" style="flex: 1;">
+                                    📸 Device Camera
+                                </button>
+                            </div>
+
+                            <!-- Preview Container -->
+                            <div class="image-preview-container" id="preview-container">
+                                <img id="preview-img" src="" alt="Selected Waste Image">
+                                <button type="button" class="remove-img-btn" id="remove-img-btn" title="Remove photograph">✕</button>
+                            </div>
+
+                            <!-- Real-Time AI Analysis Preview Box -->
+                            <div class="ai-box" id="ai-preview-box" style="display: none;">
+                                <div class="ai-header">
+                                    <div class="ai-badge">🤖 GEMINI AI PREVIEW</div>
+                                    <div id="ai-conf-text" style="font-size: 12px; font-weight: 700; color: #065f46;">Scanning...</div>
+                                </div>
+
+                                <div id="ai-preview-loading" style="text-align: center; padding: 16px; color: #047857;">
+                                    ⏳ Analyzing visual features with Google Gemini Multimodal Vision...
+                                </div>
+
+                                <div id="ai-preview-result" style="display: none;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                                        <h4 id="ai-primary-cat" style="color: #064e3b; font-size: 15px; font-weight: 800;">Primary Category</h4>
+                                        <span id="ai-severity-badge" class="badge badge-severity-medium">Medium Severity</span>
+                                    </div>
+
+                                    <div class="confidence-bar">
+                                        <div class="confidence-fill" id="ai-conf-fill"></div>
+                                    </div>
+
+                                    <div style="margin-bottom: 8px;" id="ai-category-tags">
+                                        <!-- Category Tags injected here -->
+                                    </div>
+
+                                    <div style="font-size: 12px; margin-bottom: 6px;">
+                                        <strong style="color: #064e3b;">Ecological Concern:</strong>
+                                        <span id="ai-risk-desc" style="color: #334155;">--</span>
+                                    </div>
+
+                                    <div style="font-size: 12px; margin-bottom: 10px;">
+                                        <strong style="color: #064e3b;">Recommended Municipal Action:</strong>
+                                        <span id="ai-action-desc" style="color: #334155;">--</span>
+                                    </div>
+
+                                    <!-- Required Statutory Guardrail Disclaimer -->
+                                    <div style="background: rgba(255,255,255,0.85); border: 1px solid #6ee7b7; border-radius: 4px; padding: 8px 10px; font-size: 11px; color: #065f46; line-height: 1.4;">
+                                        ⚠️ <strong>Statutory Disclaimer:</strong> AI findings are preliminary observations based on visual features. Official determinations and enforcement citations require physical on-site inspection by an authorized officer.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Geolocation & Reporter Details -->
+                    <div>
+                        <div class="card">
+                            <div class="card-title">
+                                <span>2. GPS Pinpoint & Site Details</span>
+                                <button type="button" class="btn btn-secondary btn-sm" id="btn-detect-gps">
+                                    📍 Detect My Location
+                                </button>
+                            </div>
+
+                            <!-- Interactive Leaflet Picker Map -->
+                            <div id="leaflet-picker-map"></div>
+                            <div style="font-size: 11px; color: #64748b; margin-bottom: 12px;">
+                                💡 Drag pin or click map to pinpoint the exact waste dumping location.
+                            </div>
+
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                                <div class="form-group">
+                                    <label class="form-label">Latitude</label>
+                                    <input type="text" class="form-control" id="form-lat" name="latitude" readonly required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Longitude</label>
+                                    <input type="text" class="form-control" id="form-lng" name="longitude" readonly required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Location Address / Street</label>
+                                <input type="text" class="form-control" id="form-address" name="location_address" placeholder="Detected via OpenStreetMap or type address..." required>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Nearby Landmark (Optional)</label>
+                                <input type="text" class="form-control" id="form-landmark" name="landmark" placeholder="e.g. Near Stormwater Drain, Metro Pillar 114">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Complaint Description & Observations</label>
+                                <textarea class="form-control" id="form-description" name="description" placeholder="Describe the scene (e.g. dumped by commercial truck, blocking pedestrian access, foul odor, volume)..."></textarea>
+                            </div>
+
+                            <hr style="border: none; border-top: 1px solid var(--gray-border); margin: 16px 0;">
+
+                            <div class="card-title" style="margin-bottom: 12px;">
+                                <span>3. Reporter Information</span>
+                            </div>
+
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                                <div class="form-group">
+                                    <label class="form-label">Reporter Type</label>
+                                    <select class="form-control" id="form-reporter-type" name="reporter_type">
+                                        <option value="Citizen">Citizen / Resident</option>
+                                        <option value="Field Officer">Field Officer (Sanitation)</option>
+                                        <option value="Environmental Volunteer">Environmental Volunteer</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Full Name</label>
+                                    <input type="text" class="form-control" id="form-reporter-name" name="reporter_name" placeholder="Anonymous Citizen">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Contact Mobile / Email (Optional)</label>
+                                <input type="text" class="form-control" id="form-reporter-contact" name="reporter_contact" placeholder="+91 98765 43210 (Kept Confidential)">
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-full" id="btn-submit-complaint" style="padding: 14px; font-size: 15px;">
+                                🚀 Submit Report & Generate Complaint ID
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </form>
+        </section>
+
+        <!-- ======================================================================
+             TAB 3: CITIZEN DASHBOARD & COMPLAINT TRACKER
+             ====================================================================== -->
+        <section id="tab-citizen" class="tab-pane">
+            <div class="section-header">
+                <h2>Citizen Environmental Dashboard & Live Tracker</h2>
+                <p>Track your submitted report in real time using your unique Complaint ID or explore city-wide community clean-up progress.</p>
+            </div>
+
+            <!-- Public Metric Cards -->
+            <div class="kpi-row">
+                <div class="kpi-card kpi-total">
+                    <div class="kpi-icon">📊</div>
+                    <div>
+                        <div class="kpi-val" id="public-stat-total">--</div>
+                        <div class="kpi-label">Total Reports Filed</div>
+                    </div>
+                </div>
+                <div class="kpi-card kpi-pending">
+                    <div class="kpi-icon">⏳</div>
+                    <div>
+                        <div class="kpi-val" id="public-stat-pending">--</div>
+                        <div class="kpi-label">Pending / Under Review</div>
+                    </div>
+                </div>
+                <div class="kpi-card kpi-closed" style="border-left: 4px solid var(--accent);">
+                    <div class="kpi-icon" style="background: #eff6ff; color: #2563eb;">🚜</div>
+                    <div>
+                        <div class="kpi-val" id="public-stat-inprogress">--</div>
+                        <div class="kpi-label">Remediation In Progress</div>
+                    </div>
+                </div>
+                <div class="kpi-card kpi-total">
+                    <div class="kpi-icon">✅</div>
+                    <div>
+                        <div class="kpi-val" id="public-stat-resolved">--</div>
+                        <div class="kpi-label">Resolved & Restored</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Complaint Tracking Search Bar -->
+            <div class="card" id="tracking-card-container">
+                <div class="card-title">
+                    <span>🔍 Track Any Complaint by Unique ID</span>
+                    <span style="font-size: 12px; color: #64748b;">Try demo IDs: <strong>EG-2026-1001</strong>, <strong>EG-2026-1002</strong>, <strong>EG-2026-1004</strong></span>
+                </div>
+                <div style="display: flex; gap: 10px; max-width: 600px; margin-bottom: 16px;">
+                    <input type="text" class="form-control" id="track-complaint-id" placeholder="Enter Complaint ID (e.g. EG-2026-XXXX)...">
+                    <button class="btn btn-primary" id="btn-search-tracking" style="flex-shrink: 0;">
+                        Track Status
+                    </button>
+                </div>
+
+                <div id="tracking-loading" style="display: none; padding: 20px; text-align: center; color: var(--primary);">
+                    ⏳ Fetching official complaint dossier and audit timeline...
+                </div>
+
+                <!-- Tracking Result Box -->
+                <div id="tracking-result-box" style="display: none; border-top: 1px solid var(--gray-border); padding-top: 20px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px;">
+                        <div>
+                            <span style="font-size: 13px; color: #64748b;">Complaint Tracking Dossier:</span>
+                            <h3 id="track-res-id" style="color: var(--primary-dark); font-size: 22px;">EG-2026-XXXX</h3>
+                        </div>
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                            <span id="track-res-status" class="badge badge-new" style="font-size: 13px; padding: 6px 12px;">New</span>
+                            <button class="btn btn-secondary btn-sm" id="track-res-pdf-btn">
+                                📥 Download Official PDF
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Multi-Stage Stepper -->
+                    <div class="tracking-stepper">
+                        <div class="tracking-step active">
+                            <div class="step-circle">1</div>
+                            <div class="step-label">Report Lodged</div>
+                        </div>
+                        <div class="tracking-step">
+                            <div class="step-circle">2</div>
+                            <div class="step-label">AI Verified & Assigned</div>
+                        </div>
+                        <div class="tracking-step">
+                            <div class="step-circle">3</div>
+                            <div class="step-label">Site Inspection</div>
+                        </div>
+                        <div class="tracking-step">
+                            <div class="step-circle">4</div>
+                            <div class="step-label">Remediation Action</div>
+                        </div>
+                        <div class="tracking-step">
+                            <div class="step-circle">5</div>
+                            <div class="step-label">Case Closed</div>
+                        </div>
+                    </div>
+
+                    <!-- Complaint Details Row -->
+                    <div class="grid-2">
+                        <div>
+                            <img id="track-res-img" src="" alt="Waste Evidence" style="width: 100%; max-height: 260px; object-fit: cover; border-radius: var(--radius-md); border: 1px solid var(--gray-border);">
+                            <div style="margin-top: 12px; font-size: 13px;">
+                                <div><strong>Waste Type:</strong> <span id="track-res-cat">--</span> (<span id="track-res-severity">--</span>)</div>
+                                <div style="margin-top: 4px;"><strong>Location:</strong> <span id="track-res-loc">--</span></div>
+                                <div style="margin-top: 4px;"><strong>Lodged At:</strong> <span id="track-res-date">--</span></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div style="background: #f8fafc; border: 1px solid var(--gray-border); border-radius: var(--radius-md); padding: 16px; margin-bottom: 16px;">
+                                <h4 style="font-size: 13px; color: var(--primary-dark); margin-bottom: 8px;">🏛️ Designated Enforcement Wing</h4>
+                                <div style="font-size: 12px; margin-bottom: 4px;"><strong>Department:</strong> <span id="track-res-dept">--</span></div>
+                                <div style="font-size: 12px;"><strong>Assigned Officer:</strong> <span id="track-res-officer">--</span></div>
+                            </div>
+
+                            <div style="background: #f8fafc; border: 1px solid var(--gray-border); border-radius: var(--radius-md); padding: 16px; margin-bottom: 16px;">
+                                <h4 style="font-size: 13px; color: var(--dark); margin-bottom: 6px;">📋 Officer Inspection Notes:</h4>
+                                <p id="track-res-inspect" style="font-size: 12px; color: #475569; line-height: 1.4;">--</p>
+                                
+                                <h4 style="font-size: 13px; color: var(--dark); margin-top: 10px; margin-bottom: 6px;">🚜 Remediation Action Taken:</h4>
+                                <p id="track-res-action" style="font-size: 12px; color: #475569; line-height: 1.4;">--</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Time-Stamped Public Audit Log -->
+                    <div style="margin-top: 20px;">
+                        <h4 style="font-size: 14px; margin-bottom: 10px;">📜 Audit Trail & Escalation Log</h4>
+                        <div class="timeline" id="track-res-timeline">
+                            <!-- Injected -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Community Reports Feed -->
+            <div class="section-header">
+                <h2>Recent Community Environmental Incidents</h2>
+                <p>Public vigilance reports filed by citizens across city sectors.</p>
+            </div>
+            <div class="complaints-feed-grid" id="public-complaints-feed">
+                <!-- Dynamically populated -->
+            </div>
+        </section>
+
+        <!-- ======================================================================
+             TAB 4: LIVE MAP & HOTSPOTS DASHBOARD
+             ====================================================================== -->
+        <section id="tab-hotspots" class="tab-pane">
+            <div class="section-header">
+                <h2>Live GIS Incident Map & Repeated Dumping Hotspots</h2>
+                <p>Interactive spatial mapping displaying all geo-tagged complaints and automated spatial clustering of repeat violation zones.</p>
+            </div>
+
+            <!-- Hotspot Metrics Strip -->
+            <div class="kpi-row">
+                <div class="kpi-card kpi-total">
+                    <div class="kpi-icon">📍</div>
+                    <div>
+                        <div class="kpi-val" id="hotspot-count-val">--</div>
+                        <div class="kpi-label">Active Hotspot Clusters</div>
+                    </div>
+                </div>
+                <div class="kpi-card kpi-overdue">
+                    <div class="kpi-icon">🔥</div>
+                    <div>
+                        <div class="kpi-val" id="hotspot-critical-val">--</div>
+                        <div class="kpi-label">Critical Risk Clusters</div>
+                    </div>
+                </div>
+                <div class="kpi-card kpi-closed" style="border-left: 4px solid var(--primary-dark);">
+                    <div class="kpi-icon" style="background: var(--primary-subtle); color: var(--primary);">🚯</div>
+                    <div>
+                        <div class="kpi-val" id="hotspot-incidents-val">--</div>
+                        <div class="kpi-label">Clustered Dumping Incidents</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interactive Leaflet Hotspot Map -->
+            <div class="card" style="padding: 12px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding: 4px 10px; flex-wrap: wrap; gap: 8px;">
+                    <div style="font-size: 13px; font-weight: 700; color: var(--dark);">
+                        🗺️ City-Wide Environmental Surveillance Radar
+                    </div>
+                    <!-- Legend -->
+                    <div style="display: flex; gap: 12px; font-size: 11px; align-items: center; flex-wrap: wrap;">
+                        <span><span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:#2563eb; margin-right:4px;"></span>New/Assigned</span>
+                        <span><span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:#ea580c; margin-right:4px;"></span>Under Review</span>
+                        <span><span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:#dc2626; margin-right:4px;"></span>Critical / Escalated</span>
+                        <span><span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:#059669; margin-right:4px;"></span>Resolved / Closed</span>
+                        <span><span style="display:inline-block; width:12px; height:12px; border-radius:50%; background:rgba(220,38,38,0.3); border:1px solid #dc2626; margin-right:4px;"></span>Hotspot Radius</span>
+                    </div>
+                </div>
+                <div id="leaflet-hotspot-map"></div>
+            </div>
+        </section>
+
+        <!-- ======================================================================
+             TAB 5: AUTHORISED OFFICER DASHBOARD
+             ====================================================================== -->
+        <section id="tab-officer" class="tab-pane">
+
+            <!-- STATE A: Officer Login Form (If not signed in) -->
+            <div id="officer-login-view" class="login-card-container">
+                <div class="card">
+                    <div style="text-align: center; margin-bottom: 24px;">
+                        <div style="width: 56px; height: 56px; border-radius: 50%; background: var(--primary-subtle); color: var(--primary-dark); font-size: 28px; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px;">
+                            🛡️
+                        </div>
+                        <h2 style="font-size: 20px; color: var(--dark);">Authorized Officer Portal</h2>
+                        <p style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;">
+                            Restricted access for Municipal Solid Waste Officers & State Pollution Control Board Magistrates.
+                        </p>
+                    </div>
+
+                    <form id="officer-login-form">
+                        <div class="form-group">
+                            <label class="form-label">Official Email ID</label>
+                            <input type="email" class="form-control" id="officer-email-input" placeholder="officer@ecoguard.ai" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Password</label>
+                            <input type="password" class="form-control" id="officer-password-input" placeholder="••••••••" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-full" id="btn-officer-login" style="padding: 12px;">
+                            🔐 Secure Officer Sign-In
+                        </button>
+                    </form>
+
+                    <!-- Quick Demo Credentials Box for Hackathon Reviewers -->
+                    <div class="demo-credentials-box">
+                        <div style="font-size: 12px; font-weight: 700; color: #0f172a; margin-bottom: 6px;">
+                            ⚡ Hackathon Demo Quick Access:
+                        </div>
+                        <p style="font-size: 11px; color: #64748b; margin-bottom: 8px;">
+                            Click any pre-configured role to immediately authenticate and inspect officer features:
+                        </p>
+                        <button type="button" class="btn btn-secondary btn-sm demo-login-btn" onclick="quickDemoLogin('officer@ecoguard.ai', 'officer123')">
+                            <span>👮 <strong>Field Inspector</strong> (Ward 104)</span>
+                            <span style="color:#059669;">officer@ecoguard.ai →</span>
+                        </button>
+                        <button type="button" class="btn btn-secondary btn-sm demo-login-btn" onclick="quickDemoLogin('admin@ecoguard.ai', 'admin123')">
+                            <span>🏛️ <strong>Zonal Commissioner</strong> (Magistrate)</span>
+                            <span style="color:#059669;">admin@ecoguard.ai →</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STATE B: Officer Dashboard (When signed in) -->
+            <div id="officer-dashboard-view" style="display: none;">
+                
+                <!-- Officer Identity Strip -->
+                <div class="card" style="padding: 16px 24px; margin-bottom: 20px; background: white; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+                    <div>
+                        <span style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--primary); font-weight: 700;">
+                            Authenticated Session • Role: <span id="officer-profile-role">OFFICER</span>
+                        </span>
+                        <h3 id="officer-profile-name" style="color: var(--dark); font-size: 18px; margin-top: 2px;">Inspector S. Sharma</h3>
+                        <div id="officer-profile-dept" style="font-size: 12px; color: #64748b;">Municipal Solid Waste Management (Ward 104)</div>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-secondary btn-sm" onclick="triggerEscalationBatch()">
+                            ⚡ Run SLA Engine Check
+                        </button>
+                        <button class="btn btn-danger btn-sm" onclick="logoutOfficer()">
+                            🚪 Log Out
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Officer KPI Metrics -->
+                <div class="kpi-row">
+                    <div class="kpi-card kpi-total">
+                        <div class="kpi-icon">📁</div>
+                        <div>
+                            <div class="kpi-val" id="kpi-total-val">--</div>
+                            <div class="kpi-label">Total Assigned</div>
+                        </div>
+                    </div>
+                    <div class="kpi-card kpi-pending">
+                        <div class="kpi-icon">⏳</div>
+                        <div>
+                            <div class="kpi-val" id="kpi-active-val">--</div>
+                            <div class="kpi-label">Active / In Progress</div>
+                        </div>
+                    </div>
+                    <div class="kpi-card kpi-overdue">
+                        <div class="kpi-icon">⚠️</div>
+                        <div>
+                            <div class="kpi-val" id="kpi-overdue-val">--</div>
+                            <div class="kpi-label">SLA Overdue Reminders</div>
+                        </div>
+                    </div>
+                    <div class="kpi-card kpi-escalated">
+                        <div class="kpi-icon">🚨</div>
+                        <div>
+                            <div class="kpi-val" id="kpi-escalated-val">--</div>
+                            <div class="kpi-label">Level 2 Escalated Cases</div>
+                        </div>
+                    </div>
+                    <div class="kpi-card kpi-closed">
+                        <div class="kpi-icon">🏁</div>
+                        <div>
+                            <div class="kpi-val" id="kpi-closed-val">--</div>
+                            <div class="kpi-label">Closed & Restored</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Complaints Table with Filters -->
+                <div class="card">
+                    <div class="card-title">
+                        <span>Complaints Dossier & Case Management</span>
+                        
+                        <!-- Filter Controls -->
+                        <div style="display: flex; gap: 10px; font-weight: normal; font-size: 13px;">
+                            <select class="form-control" id="filter-status" style="width: auto; padding: 6px 10px; font-size: 12px;">
+                                <option value="All">All Statuses</option>
+                                <option value="New">New</option>
+                                <option value="Assigned">Assigned</option>
+                                <option value="Acknowledged">Acknowledged</option>
+                                <option value="Under Review">Under Review</option>
+                                <option value="Inspection Pending">Inspection Pending</option>
+                                <option value="Verified">Verified</option>
+                                <option value="In Progress">In Progress</option>
+                                <option value="Action Taken">Action Taken</option>
+                                <option value="Closed">Closed</option>
+                                <option value="Overdue">Overdue</option>
+                                <option value="Escalated">Escalated</option>
+                                <option value="Rejected">Rejected</option>
+                            </select>
+
+                            <select class="form-control" id="filter-category" style="width: auto; padding: 6px 10px; font-size: 12px;">
+                                <option value="All">All Waste Types</option>
+                                <option value="Plastic & Packaging Waste">Plastic Waste</option>
+                                <option value="Construction & Demolition (C&D) Waste">C&D Debris</option>
+                                <option value="Industrial & Hazardous Waste">Hazardous Waste</option>
+                                <option value="Electronic Waste (E-Waste)">E-Waste</option>
+                                <option value="Organic & Biodegradable Waste">Organic Waste</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Complaint ID</th>
+                                    <th>Evidence</th>
+                                    <th>AI Classification</th>
+                                    <th>Severity</th>
+                                    <th>Site Location</th>
+                                    <th>Current Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="complaints-table-body">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ======================================================================
+             TAB 6: ENVIRONMENTAL GUIDELINES (RAG KNOWLEDGE BASE)
+             ====================================================================== -->
+        <section id="tab-knowledge" class="tab-pane">
+            <div class="section-header">
+                <h2>Statutory Environmental Knowledge Base</h2>
+                <p>Governing statutory frameworks and handling protocols retrieved for contextual AI recommendations.</p>
+            </div>
+
+            <div class="kb-grid" id="kb-rules-container">
+                <!-- Dynamically loaded -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ==========================================================================
+         MODALS
+         ========================================================================== -->
+
+    <!-- 1. LIVE CAMERA CAPTURE MODAL -->
+    <div class="modal-overlay" id="camera-modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <button class="modal-close-btn" id="btn-close-camera">✕</button>
+            <h3 style="margin-bottom: 12px; color: var(--dark);">📸 Camera Photo Capture</h3>
+            <p style="font-size: 13px; color: #64748b; margin-bottom: 16px;">
+                Align the dumped waste within the camera frame and click "Take Snapshot".
+            </p>
+            
+            <div class="camera-container">
+                <video id="camera-video" autoplay playsinline></video>
+                <canvas id="camera-canvas"></canvas>
+            </div>
+
+            <div class="camera-controls">
+                <button type="button" class="btn btn-secondary" onclick="closeCameraModal()">Cancel</button>
+                <button type="button" class="btn btn-primary" id="btn-snap-camera">📸 Take Snapshot</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. SUBMISSION SUCCESS MODAL -->
+    <div class="modal-overlay" id="success-modal">
+        <div class="modal-content" style="max-width: 540px; text-align: center;">
+            <button class="modal-close-btn" id="close-success-modal">✕</button>
+            
+            <div style="width: 64px; height: 64px; background: #ecfdf5; color: #059669; border-radius: 50%; font-size: 32px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px;">
+                ✓
+            </div>
+            
+            <h2 style="color: #065f46; margin-bottom: 6px;">Complaint Registered Successfully!</h2>
+            <p style="color: #64748b; font-size: 13px; margin-bottom: 20px;">
+                Your report has been logged into the municipal enforcement database and dispatched to the field unit.
+            </p>
+
+            <div style="background: #f8fafc; border: 1px solid var(--gray-border); border-radius: var(--radius-md); padding: 16px; text-align: left; margin-bottom: 24px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                    <span style="font-size: 12px; color: #64748b;">Unique Complaint ID:</span>
+                    <strong style="color: var(--primary-dark); font-size: 14px;" id="success-cid">EG-2026-XXXX</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                    <span style="font-size: 12px; color: #64748b;">AI Classification:</span>
+                    <strong id="success-category">--</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                    <span style="font-size: 12px; color: #64748b;">Severity Level:</span>
+                    <strong id="success-severity">--</strong>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                    <span style="font-size: 12px; color: #64748b;">Routing Wing:</span>
+                    <span id="success-dept" style="font-size: 12px;">--</span>
+                </div>
+                <div style="display: flex; justify-content: space-between;">
+                    <span style="font-size: 12px; color: #64748b;">Assigned Officer:</span>
+                    <span id="success-officer" style="font-size: 12px;">--</span>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                <button class="btn btn-secondary" id="success-pdf-btn">
+                    📥 Download PDF Dossier
+                </button>
+                <button class="btn btn-primary" id="success-track-btn">
+                    🔍 Track in Citizen Portal
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. OFFICER COMPLAINT REVIEW & ESCALATION MODAL -->
+    <div class="modal-overlay" id="review-modal">
+        <div class="modal-content" style="max-width: 980px;">
+            <button class="modal-close-btn" id="modal-close-btn">✕</button>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid var(--gray-border); padding-bottom: 12px;">
+                <div>
+                    <span style="font-size: 12px; color: #64748b;">Statutory Incident Dossier:</span>
+                    <h2 id="modal-cid" style="color: var(--primary-dark); font-size: 22px;">EG-2026-XXXX</h2>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                    <button class="btn btn-secondary btn-sm" id="modal-pdf-btn">
+                        📥 Download Official PDF Report
+                    </button>
+                    <!-- Hackathon Fast Forward SLA Demo Button -->
+                    <button class="btn btn-warning btn-sm" id="modal-simulate-esc-btn" title="Simulates passage of 24h/48h SLA to test automated reminder and escalation logic">
+                        ⚡ Test SLA Escalation (+24h / +48h Demo)
+                    </button>
+                </div>
+            </div>
+
+            <div id="modal-loading" style="text-align: center; padding: 40px; color: var(--primary);">
+                ⏳ Loading full complaint dossier and audit records...
+            </div>
+
+            <div id="modal-body-content" style="display: none;">
+                
+                <!-- Escalation Alert Banner -->
+                <div id="modal-esc-notice" style="display: none; background: #fee2e2; border-left: 4px solid #dc2626; padding: 12px 16px; border-radius: var(--radius-sm); font-size: 13px; color: #991b1b; margin-bottom: 20px;">
+                    <!-- Notice text -->
+                </div>
+
+                <div class="grid-2">
+                    
+                    <!-- Left: Photographic & AI Vision Dossier -->
+                    <div>
+                        <div class="card" style="padding: 16px; margin-bottom: 16px;">
+                            <img id="modal-img" src="" alt="Waste Photograph Evidence" style="width: 100%; max-height: 280px; object-fit: cover; border-radius: var(--radius-md); border: 1px solid var(--gray-border);">
+                            
+                            <div style="margin-top: 14px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                                    <h4 id="modal-cat" style="color: var(--dark); font-size: 15px;">Primary Category</h4>
+                                    <span id="modal-sev" class="badge badge-severity-medium">Medium</span>
+                                </div>
+                                <div id="modal-conf" style="font-size: 12px; color: #059669; font-weight: 700; margin-bottom: 8px;">92% Confidence</div>
+                                
+                                <div style="font-size: 12px; margin-bottom: 6px;">
+                                    <strong style="color: var(--dark);">Risk Assessment:</strong>
+                                    <span id="modal-risk" style="color: #475569;">--</span>
+                                </div>
+                                <div style="font-size: 12px; margin-bottom: 6px;">
+                                    <strong style="color: var(--dark);">Ecological Impact:</strong>
+                                    <span id="modal-impact" style="color: #475569;">--</span>
+                                </div>
+                                <div style="font-size: 12px;">
+                                    <strong style="color: var(--dark);">Recommended Action:</strong>
+                                    <span id="modal-action-rec" style="color: #475569;">--</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Incident Geolocation Details -->
+                        <div class="card" style="padding: 16px;">
+                            <h4 style="font-size: 13px; color: var(--dark); margin-bottom: 8px;">📍 Site Location & Reporter Details</h4>
+                            <div style="font-size: 12px; margin-bottom: 4px;"><strong>Reporter:</strong> <span id="modal-reporter">--</span></div>
+                            <div style="font-size: 12px; margin-bottom: 4px;"><strong>GPS Coordinates:</strong> <span id="modal-coords">--</span></div>
+                            <div style="font-size: 12px; margin-bottom: 4px;"><strong>Address:</strong> <span id="modal-address">--</span></div>
+                            <div style="font-size: 12px; margin-bottom: 4px;"><strong>Reported At:</strong> <span id="modal-time">--</span></div>
+                            <div style="font-size: 12px;"><strong>Citizen Description:</strong> <span id="modal-citizen-desc" style="color: #334155;">--</span></div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Officer Actions, Status Updates & Audit Log -->
+                    <div>
+                        <div class="card" style="padding: 18px; margin-bottom: 16px;">
+                            <h4 style="font-size: 14px; color: var(--primary-dark); margin-bottom: 12px;">
+                                ✍️ Official Verification & Remediation Actions
+                            </h4>
+
+                            <div class="form-group">
+                                <label class="form-label">Update Case Status</label>
+                                <select class="form-control" id="modal-status-select">
+                                    <option value="New">New</option>
+                                    <option value="Assigned">Assigned</option>
+                                    <option value="Acknowledged">Acknowledged</option>
+                                    <option value="Under Review">Under Review</option>
+                                    <option value="Inspection Pending">Inspection Pending</option>
+                                    <option value="Verified">Verified (Confirmed Violation)</option>
+                                    <option value="In Progress">In Progress (Clean-up Dispatched)</option>
+                                    <option value="Action Taken">Action Taken</option>
+                                    <option value="Closed">Closed (Waste Cleared & Site Restored)</option>
+                                    <option value="Overdue">Overdue (SLA Exceeded)</option>
+                                    <option value="Escalated">Escalated to Zonal Magistrate</option>
+                                    <option value="Rejected">Rejected (Unsubstantiated / Duplicate)</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Field Inspection Observations / Remarks</label>
+                                <textarea class="form-control" id="modal-notes" rows="3" placeholder="Enter findings from site visit (volume in tons, violator identification, vehicle registration numbers, drain obstruction)..."></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Remediation Action Taken Notes</label>
+                                <textarea class="form-control" id="modal-action-taken" rows="2" placeholder="Record machinery deployed (e.g. 2 tippers, JCB excavator), disposal facility, and statutory penalty levied..."></textarea>
+                            </div>
+
+                            <div style="font-size: 12px; color: #64748b; margin-bottom: 12px;">
+                                Currently Assigned: <strong id="modal-officer">--</strong> (<span id="modal-dept">--</span>)
+                            </div>
+
+                            <button type="button" class="btn btn-primary btn-full" id="modal-save-btn">
+                                💾 Save Inspection & Status Updates
+                            </button>
+                        </div>
+
+                        <!-- Tamper-Evident Time-Stamped Audit Log -->
+                        <div class="card" style="padding: 18px;">
+                            <h4 style="font-size: 14px; color: var(--dark); margin-bottom: 8px;">
+                                📜 Chronological Audit Trail & Escalation Log
+                            </h4>
+                            <div class="timeline" id="modal-timeline">
+                                <!-- Populated dynamically -->
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================================================
+         TOAST CONTAINER FOR NOTIFICATIONS
+         ========================================================================== -->
+    <div id="toast-container"></div>
+
+    <!-- ==========================================================================
+         FOOTER
+         ========================================================================== -->
+    <footer class="footer">
+        <div class="footer-inner">
+            <div class="footer-col">
+                <h5>🌿 ECOGUARD AI PLATFORM</h5>
+                <p>
+                    AI-Powered Illegal Waste Dumping Detection, Monitoring and Complaint Escalation System. Bridging citizen photo reporting, Gemini computer vision, GPS verification, and automated municipal accountability.
+                </p>
+                <p style="margin-top: 12px; color: #10b981; font-weight: 600;">
+                    Tagline: Detect. Analyse. Report. Assign. Escalate. Protect.
+                </p>
+            </div>
+            <div class="footer-col">
+                <h5>QUICK NAVIGATION</h5>
+                <ul>
+                    <li><a href="javascript:void(0)" onclick="showTab('tab-home')">Home Page</a></li>
+                    <li><a href="javascript:void(0)" onclick="showTab('tab-report')">File Waste Report</a></li>
+                    <li><a href="javascript:void(0)" onclick="showTab('tab-citizen')">Citizen Tracking Portal</a></li>
+                    <li><a href="javascript:void(0)" onclick="showTab('tab-hotspots')">GIS Hotspots Map</a></li>
+                    <li><a href="javascript:void(0)" onclick="showTab('tab-officer')">Authorised Officer Login</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h5>LEGAL FRAMEWORKS</h5>
+                <ul>
+                    <li><a href="javascript:void(0)" onclick="showTab('tab-knowledge')">Plastic Waste Rules 2016</a></li>
+                    <li><a href="javascript:void(0)" onclick="showTab('tab-knowledge')">C&D Waste Rules 2016</a></li>
+                    <li><a href="javascript:void(0)" onclick="showTab('tab-knowledge')">Hazardous Waste Rules 2016</a></li>
+                    <li><a href="javascript:void(0)" onclick="showTab('tab-knowledge')">E-Waste Rules 2022</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h5>MUNICIPAL VIGILANCE</h5>
+                <p>🚨 Emergency Pollution Hotline: <strong>1800-ECO-GUARD</strong></p>
+                <p>📧 Enforcement Cell: <strong>vigilance@ecoguard.ai</strong></p>
+                <p style="margin-top: 10px; font-size: 11px;">
+                    Authorised by Municipal Administration & Urban Development Department & State Pollution Control Board.
+                </p>
+            </div>
+        </div>
+
+        <div class="footer-disclaimer">
+            ⚖️ <strong>Regulatory Notice:</strong> Photographs submitted provide visual evidentiary indications. The AI classification engine produces preliminary assessments that require physical on-site inspection by a designated municipal officer before statutory notices, fines, or criminal complaints under Section 15 of the Environment Protection Act are issued.
+        </div>
+
+        <div class="footer-bottom">
+            <div>© 2026 ECOGUARD AI System. Version 1.0 (Hackathon MVP Release). All Rights Reserved.</div>
+            <div>Powered by FastAPI, Google Gemini AI, SQLite & Leaflet GIS</div>
+        </div>
+    </footer>
+
+    <!-- ==========================================================================
+         MOBILE BOTTOM APP NAVIGATION BAR (Android PWA One-Thumb Navigation)
+         ========================================================================== -->
+    <nav class="mobile-bottom-nav">
+        <button class="mobile-nav-btn active" data-tab="tab-home">
+            <span class="mobile-nav-icon">🏠</span>
+            <span class="mobile-nav-label">Home</span>
+        </button>
+        <button class="mobile-nav-btn" data-tab="tab-report">
+            <span class="mobile-nav-icon">📢</span>
+            <span class="mobile-nav-label">Report</span>
+        </button>
+        <button class="mobile-nav-btn" data-tab="tab-citizen">
+            <span class="mobile-nav-icon">📊</span>
+            <span class="mobile-nav-label">Track</span>
+        </button>
+        <button class="mobile-nav-btn" data-tab="tab-hotspots">
+            <span class="mobile-nav-icon">🗺️</span>
+            <span class="mobile-nav-label">Map</span>
+        </button>
+        <button class="mobile-nav-btn" data-tab="tab-officer">
+            <span class="mobile-nav-icon">🛡️</span>
+            <span class="mobile-nav-label">Officer</span>
+        </button>
+    </nav>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    
+    <!-- Application Scripts -->
+    <script src="/static/js/app.js"></script>
+    <script src="/static/js/citizen.js"></script>
+    <script src="/static/js/officer.js"></script>
+    <script src="/static/js/hotspots.js"></script>
+</body>
+</html>

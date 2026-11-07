@@ -1,0 +1,95 @@
+{
+  "id": "ecoguard-ai-pwa-v1",
+  "name": "ECOGUARD AI – Waste Dumping Detection & Escalation",
+  "short_name": "EcoGuard AI",
+  "description": "AI-Powered Illegal Waste Dumping Detection, Monitoring and Complaint Escalation System",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "background_color": "#064e3b",
+  "theme_color": "#065f46",
+  "orientation": "portrait-primary",
+  "categories": ["environment", "government", "utilities", "productivity"],
+  "lang": "en",
+  "icons": [
+    {
+      "src": "/static/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/static/icons/icon-192x192-maskable.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/static/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/static/icons/icon-512x512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Report Dumping",
+      "short_name": "Report",
+      "description": "Snap photo, lock GPS and report waste dumping",
+      "url": "/#report",
+      "icons": [
+        {
+          "src": "/static/icons/icon-192x192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Track Complaint",
+      "short_name": "Track",
+      "description": "Track your complaint status and audit history",
+      "url": "/#citizen",
+      "icons": [
+        {
+          "src": "/static/icons/icon-192x192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Live GIS Map",
+      "short_name": "GIS Map",
+      "description": "View live incidents and repeated dumping hotspots",
+      "url": "/#hotspots",
+      "icons": [
+        {
+          "src": "/static/icons/icon-192x192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Officer Dashboard",
+      "short_name": "Officer",
+      "description": "Review cases, inspect locations and update status",
+      "url": "/#officer",
+      "icons": [
+        {
+          "src": "/static/icons/icon-192x192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ]
+}
